@@ -39,8 +39,14 @@ import {
 } from "../../../redux/reducers/formReduxReducer";
 
 const FormRedux = () => {
-  const { arrStudents, studentInput, errMessage, isValid, searchInput } =
-    useSelector((state) => state.formReduxReducer);
+  const {
+    arrStudents,
+    studentInput,
+    errMessage,
+    isValid,
+    searchInput,
+    arrStudentFilter,
+  } = useSelector((state) => state.formReduxReducer);
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
@@ -68,114 +74,8 @@ const FormRedux = () => {
     dispatch(action);
   };
 
-  const findStudent = (inputSearch) => {
-    const searchTerm = stringToSlug(inputSearch).toLowerCase();
-    const foundStudents = arrStudents.filter((student) => {
-      const { id, name, phone, email } = student;
-      const slugId = stringToSlug(id).toLowerCase();
-      const slugName = stringToSlug(name).toLowerCase();
-      const slugPhone = stringToSlug(phone);
-      const slugEmail = stringToSlug(email).toLowerCase();
-
-      return (
-        slugId.includes(searchTerm) ||
-        slugName.includes(searchTerm) ||
-        slugPhone.includes(searchTerm) ||
-        slugEmail.includes(searchTerm)
-      );
-    });
-
-    console.log("foundStudents in findStudent method", foundStudents);
-    return foundStudents;
-  };
-
-  const stringToSlug = (title) => {
-    let slug = title.toLowerCase();
-
-    const diacriticMap = {
-      á: "a",
-      à: "a",
-      ả: "a",
-      ạ: "a",
-      ã: "a",
-      ă: "a",
-      ắ: "a",
-      ằ: "a",
-      ẳ: "a",
-      ẵ: "a",
-      ặ: "a",
-      â: "a",
-      ấ: "a",
-      ầ: "a",
-      ẩ: "a",
-      ẫ: "a",
-      ậ: "a",
-      é: "e",
-      è: "e",
-      ẻ: "e",
-      ẽ: "e",
-      ẹ: "e",
-      ê: "e",
-      ế: "e",
-      ề: "e",
-      ể: "e",
-      ễ: "e",
-      ệ: "e",
-      í: "i",
-      ì: "i",
-      ỉ: "i",
-      ĩ: "i",
-      ị: "i",
-      ó: "o",
-      ò: "o",
-      ỏ: "o",
-      õ: "o",
-      ọ: "o",
-      ô: "o",
-      ố: "o",
-      ồ: "o",
-      ổ: "o",
-      ỗ: "o",
-      ộ: "o",
-      ơ: "o",
-      ớ: "o",
-      ờ: "o",
-      ở: "o",
-      ỡ: "o",
-      ợ: "o",
-      ú: "u",
-      ù: "u",
-      ủ: "u",
-      ũ: "u",
-      ụ: "u",
-      ư: "u",
-      ứ: "u",
-      ừ: "u",
-      ử: "u",
-      ữ: "u",
-      ự: "u",
-      ý: "y",
-      ỳ: "y",
-      ỷ: "y",
-      ỹ: "y",
-      ỵ: "y",
-      đ: "d",
-    };
-
-    slug = slug.replace(/[^\w\s-]/g, "");
-    slug = slug.replace(/\s+/g, "-");
-    slug = slug.replace(/-{2,}/g, "-");
-    slug = slug.replace(/[^a-z0-9-]/g, (match) => diacriticMap[match] || "");
-
-    slug = slug.replace(/^-+|-+$/g, "");
-
-    return slug;
-  };
-
   const renderTableByArrStudent = (arr) => {
-    arr.map((student, index) => {
-      console.log(student);
-
+    return arr.map((student, index) => {
       return (
         <tr key={index}>
           <th scope="row">{student.id}</th>
@@ -214,22 +114,20 @@ const FormRedux = () => {
     });
   };
 
-  const renderTbody = (arr, inputSearch) => {
-    const foundStudents = findStudent(inputSearch);
-
-    if (inputSearch.trim() === "" || foundStudents.length === 0) {
-      console.log("Render arr students default");
-      renderTableByArrStudent(arrStudents);
+  const renderTbody = (inputSearch) => {
+    if (inputSearch.trim() === "" || arrStudentFilter.length === 0) {
+      console.log(
+        "🚀 ~ file: FormRedux.jsx:124 ~ renderTbody ~ arrStudents:",
+        arrStudents
+      );
+      return renderTableByArrStudent(arrStudents);
     } else {
-      console.log("Render arr students founded");
-
-      renderTableByArrStudent(foundStudents);
+      console.log(
+        "🚀 ~ file: FormRedux.jsx:127 ~ renderTbody ~ arrStudentFilter:",
+        arrStudentFilter
+      );
+      return renderTableByArrStudent(arrStudentFilter);
     }
-    console.log(
-      "🚀 ~ file: FormRedux.jsx:134 ~ renderTbody ~ foundStudents:",
-      foundStudents
-    );
-    console.log("🚀 ~ file: FormRedux.jsx:139 ~ renderTbody ~ arr:", arr);
   };
 
   return (
@@ -364,7 +262,7 @@ const FormRedux = () => {
           </tr>
         </thead>
 
-        <tbody>{renderTbody(arrStudents, searchInput)}</tbody>
+        <tbody>{renderTbody(searchInput)}</tbody>
       </Table>
       <br />
     </Container>
