@@ -7,31 +7,31 @@ const initialState = {
     {
       id: "100001",
       name: "Nguyễn Văn A",
-      phone: "+84 91 123 456",
+      phone: "1234567890",
       email: "nguyenvan@gmail.com",
     },
     {
       id: "100002",
       name: "Nguyễn Văn B",
-      phone: "+84 77 987 654",
+      phone: "0987654321",
       email: "nguyenvanb@gmail.com",
     },
     {
       id: "100003",
       name: "Nguyễn Văn C",
-      phone: "+84 35 567 890",
+      phone: "9876543210",
       email: "nguyenvanc@gmail.com",
     },
     {
       id: "100004",
       name: "Nguyễn Văn D",
-      phone: "+84 92 456 789",
+      phone: "0123456789",
       email: "nguyenvand@gmail.com",
     },
     {
       id: "100005",
       name: "Nguyễn Văn E",
-      phone: "+84 88 234 567",
+      phone: "9998887776",
       email: "nguyenvane@gmail.com",
     },
   ],
@@ -55,8 +55,15 @@ const initialState = {
     phone: true,
     email: true,
   },
-  toastMessage: "Please enter new student data.",
   searchInput: "",
+  arrStudentFilter: [
+    {
+      id: "",
+      name: "",
+      phone: "",
+      email: "",
+    },
+  ],
 };
 
 const formReduxReducer = createSlice({
@@ -71,20 +78,20 @@ const formReduxReducer = createSlice({
 
       if (isValid.isValid) {
         const index = arrStudents.findIndex((student) => student.id === id);
-        if (index !== -1) {
-          arrStudents.splice(index, 1, action.payload);
 
-          state.toastMessage =
-            `Successfully updated the data of the student with the student ID ` +
-            id;
+        if (index !== -1) {
+          arrStudents[index] = action.payload;
+          alert(
+            `Successfully updated the data of the student with the student ID ${id}`
+          );
         } else {
-          state.toastMessage =
-            `Successfully added the data of the student with the student ID ` +
-            id;
           arrStudents.push(action.payload);
+          alert(
+            `Successfully added the data of the student with the student ID ${id}`
+          );
         }
       } else {
-        state.toastMessage = `Please verify the validity of the data again.`;
+        alert(`Please verify the validity of the data again.`);
       }
 
       state.studentInput.id = "";
@@ -92,6 +99,7 @@ const formReduxReducer = createSlice({
       state.studentInput.phone = "";
       state.studentInput.email = "";
     },
+
     updateStudentInput: (state, action) => {
       const { id, value } = action.payload;
 
@@ -190,7 +198,7 @@ const formReduxReducer = createSlice({
       const { id, value } = action.payload;
 
       console.log(action);
-      state.studentInput[id] = value;
+      state.searchInput = value;
     },
     claerFormAction: (state, action) => {
       state.studentInput.id = "";
